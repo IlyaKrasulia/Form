@@ -1,0 +1,15 @@
+@font-face {
+    font-family: "Fixel-Medium";
+    src:
+      url("./Fixel/FixelDisplay-Medium.woff2") format("woff2"),
+      url("./Fixel/FixelDisplay-Medium.ttf") format("ttf");
+    font-weight: 200;
+}
+
+@font-face {
+    font-family: "Fixel-Regular";
+    src:
+      url("./Fixel/FixelDisplay-Regular.woff2") format("woff2"),
+      url("./Fixel/FixelDisplay-Regular.ttf") format("ttf");
+    font-weight: 100;
+}
