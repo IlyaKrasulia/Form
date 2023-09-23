@@ -44,8 +44,8 @@ export const SInupt = ({
   value,
   name,
   addPhone,
+  labeloff,
 }) => {
-
   const addChip = (setState, value, state) => {
     if (!state.find((it) => it === value)) {
       setState([...state, value]);
@@ -56,15 +56,10 @@ export const SInupt = ({
     setState(state.filter((it) => it !== value));
   };
 
-  const plusPhone = (e) => {
-    e.preventDefault()
-    addPhone()
-  }
-
   return (
     <InputWrapper style={{ marginBottom: marginBottom }}>
       <InputTop>
-        <Label>{label}</Label>
+        {!labeloff && <Label>{label}</Label>}
         {notNecessarily && (
           <TextNotNecessarily>Не обов’язково</TextNotNecessarily>
         )}
@@ -86,7 +81,9 @@ export const SInupt = ({
           <AddCarLicense
             options={carLicCategories}
             placeholder="Додати"
-            onInputChange={(e, value) => addChip(setLicenses, value, licenses)}
+            onInputChange={(e, value) => {
+              value.length > 0 && addChip(setLicenses, value, licenses);
+            }}
             renderInput={(params) => (
               <TextField {...params} placeholder="Додати" />
             )}
@@ -124,7 +121,7 @@ export const SInupt = ({
             options={carLicCategories}
             placeholder="Додати"
             onInputChange={(e, value) =>
-              addChip(setLanguages, value, languages)
+              value.length > 0 && addChip(setLanguages, value, languages)
             }
             renderInput={(params) => (
               <TextField {...params} placeholder="Додати" />
@@ -137,7 +134,7 @@ export const SInupt = ({
                 {languages.map((it, index) => {
                   return (
                     <SChip
-                      key={indexedDB}
+                      key={index}
                       label={it}
                       deleteIcon={
                         <img
@@ -163,7 +160,13 @@ export const SInupt = ({
             <SliderTopText>Не вказувати</SliderTopText>
             <SliderTopText>70 років</SliderTopText>
           </SliderTop>
-          <SSlider onChange={onChange} value={value} size="small" valueLabelDisplay="on" max={70} />
+          <SSlider
+            onChange={onChange}
+            value={value}
+            size="small"
+            valueLabelDisplay="on"
+            max={70}
+          />
         </>
       ) : type === "phone" ? (
         <>
@@ -175,9 +178,6 @@ export const SInupt = ({
             onChange={onChange}
             name={name}
           />
-          <button onClick={(e) => plusPhone(e)}>
-            <TextInfo>Додати додатковий номер</TextInfo>
-          </button>
         </>
       ) : (
         <Input

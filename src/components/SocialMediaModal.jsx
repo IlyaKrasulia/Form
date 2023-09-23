@@ -48,7 +48,7 @@ export const SocialMediaModal = ({
           <img src={CloseSvg} alt="Close" />
         </CloseBtn>
         <FormWrapper>
-          {phones.map((it, index) => {
+          {phones.filter(it => it !== '').map((it, index) => {
             return (
               <Item key={index}>
                 <h3>{it}</h3>

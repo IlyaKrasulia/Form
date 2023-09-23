@@ -30,8 +30,7 @@ function App() {
   const passportInputRef = useRef(null);
   const internationalPassportInputRef = useRef(null);
   const moreInputRef = useRef(null);
-  const [phones, setPhones] = useState([]);
-  const [phone, setPhone] = useState("");
+  const [phoneNumbers, setPhoneNumbers] = useState(["+"]);
   const [socialMediaModalVisible, setSocialMediaModaVisible] = useState(false);
   const [telegram, setTelegram] = useState([]);
   const [whatsapp, setWhatsapp] = useState([]);
@@ -94,7 +93,6 @@ function App() {
       whatsapp: "",
     },
     onSubmit: (values) => {
-      phones.length === 0 && formik.setFieldValue("phone", phone);
       alert(JSON.stringify(values, null, 2));
     },
   });
@@ -110,9 +108,9 @@ function App() {
   }, [languages]);
 
   useEffect(() => {
-    formik.setFieldValue("phone", phones?.join(", "));
+    formik.setFieldValue("phone", phoneNumbers.filter(it => it !== '').join(", "));
     //eslint-disable-next-line
-  }, [phones]);
+  }, [phoneNumbers]);
 
   useEffect(() => {
     formik.setFieldValue("viber", viber?.join(", "));
@@ -128,6 +126,20 @@ function App() {
     formik.setFieldValue("telegram", telegram?.join(", "));
     //eslint-disable-next-line
   }, [telegram]);
+
+  const handleAdditionalPhoneNumberChange = (value, index) => {
+    const newPhoneNumbers = [...phoneNumbers];
+    newPhoneNumbers[index] = value;
+  
+    if (value.length === 19 && index === newPhoneNumbers.length - 1) {
+      setPhoneNumbers([...newPhoneNumbers, '']);
+    } else if (value.length < 19 && newPhoneNumbers.length > 1 && index === newPhoneNumbers.length - 2) {
+      setPhoneNumbers(newPhoneNumbers.slice(0, -1));
+    } else {
+      setPhoneNumbers(newPhoneNumbers);
+    }
+  };
+
   return (
     <div className="App">
       <FormWrapper>
@@ -224,23 +236,20 @@ function App() {
                 value={formik.values.birthday}
                 onChange={(value) => formik.setFieldValue("birthday", value.$d)}
               />
-              <SInupt
-                type={"phone"}
-                label={"Телефон"}
-                marginBottom={30}
-                value={phone}
-                onChange={(value) => {
-                  setPhone(value);
-                  formik.setFieldValue("phone", phones?.join(" ,") + value);
-                }}
-                name="phone"
-                addPhone={() => {
-                  if (phone.length === 19) {
-                    setPhones([...phones, phone]);
-                    setPhone("");
-                  }
-                }}
-              />
+              {phoneNumbers.map((it, index) => {
+                return (
+                  <SInupt
+                    key={index}
+                    labeloff={index !== 0 && true}
+                    type={"phone"}
+                    label={"Телефон"}
+                    marginBottom={30}
+                    value={it}
+                    onChange={(value) => handleAdditionalPhoneNumberChange(value, index)}
+                    name="phone"
+                  />
+                );
+              })}
               {
                 <AddSocialMediaMobile>
                   <Title>Месенджери</Title>
@@ -596,7 +605,7 @@ function App() {
       {socialMediaModalVisible && (
         <SocialMediaModal
           closeModal={() => setSocialMediaModaVisible(false)}
-          phones={phones}
+          phones={phoneNumbers}
           telegram={telegram}
           setTelegram={setTelegram}
           viber={viber}
